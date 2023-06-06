@@ -16,11 +16,41 @@ async function createActivity({ name, description }) {
 
 async function getAllActivities() {
   // select and return an array of all activities
-}
+  try {
+    const {rows} = await client.query(`
+    SELECT *
+    FROM activities
+    `);
 
-async function getActivityById(id) {}
+    return rows;
 
-async function getActivityByName(name) {}
+  } catch(ex) {console.log(ex)}
+};
+
+async function getActivityById(id) {
+  try {
+    const {rows: [activity]} = await client.query(`
+      SELECT id, name, description
+      FROM activities
+      WHERE id=${id}
+    `);
+
+    return activity;
+
+  } catch(ex) {console.log(ex)}
+};
+
+async function getActivityByName(name) {  try {
+  const {rows: [activityName]} = await client.query(`
+    SELECT id, name, description
+    FROM activities
+    WHERE name=$1
+  `, [name]);
+
+  return activityName;
+
+} catch(ex) {console.log(ex)}
+};
 
 // used as a helper inside db/routines.js
 async function attachActivitiesToRoutines(routines) {}
