@@ -10,7 +10,15 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   } catch(ex) {}
 };
 
-async function getRoutineById(id) {}
+async function getRoutineById(id) {
+  try { 
+    const { rows: [ post ] } = await client.query(`
+    SELECT *
+    FROM routines
+    WHERE id=$1;
+    `, [id]);
+  } catch(ex) {console.log(ex)}
+};
 
 async function getRoutinesWithoutActivities() {}
 
