@@ -14,8 +14,8 @@ async function dropTables() {
   //drop all tables, in the correct order
   await client.query (`
   DROP TABLE IF EXISTS routineactivities;
-  DROP TABLE IF EXISTS routines;
   DROP TABLE IF EXISTS activities;
+  DROP TABLE IF EXISTS routines;
   DROP TABLE IF EXISTS users;
   `);
   console.log("Finished Dropping Tables");
@@ -43,7 +43,7 @@ async function createTables() {
     name VARCHAR(255) UNIQUE NOT NULL,
     goal TEXT NOT NULL
   );
-  CREATE TABLE routineactivities (
+  CREATE TABLE routine_activities (
     id SERIAL PRIMARY KEY,
     "routineId" INTEGER REFERENCES routines ( id ) UNIQUE,
     "activityId" INTEGER REFERENCES activities ( id ) UNIQUE,
