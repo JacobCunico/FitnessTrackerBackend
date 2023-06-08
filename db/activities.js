@@ -64,12 +64,11 @@ async function attachActivitiesToRoutines(routines) {
   FROM activities
   JOIN routine_activities ON activities.id = routine_activities."activityId";
   `)
-  console.log("activities", activities);
+
   routines.forEach(
     routine => routine.activities = activities.filter(
       activity => routine.id === activity.routineId ));
 
-  console.log("ROUTINE LOG", routines);
   return routines;
 };
 

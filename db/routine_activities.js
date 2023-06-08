@@ -14,7 +14,7 @@ async function addActivityToRoutine({
   `, [routineId, activityId, count, duration,]);
  return activityRoutine;
 } catch(ex) {console.log(ex)}
-}
+};
 
 async function getRoutineActivityById(id) {}
 
