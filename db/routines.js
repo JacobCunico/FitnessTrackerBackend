@@ -80,13 +80,42 @@ async function getPublicRoutinesByActivity({ id }) {
   SELECT routines.*, users.username AS "creatorName"
   FROM routines
   JOIN users ON routines."creatorId" = users.id
-`)
-return await attachActivitiesToRoutines(routines);
+  JOIN routine_activities 
+  ON routine_activites."routineId" = routines.id
+  WHERE routines."isPublic" = true 
+  AND routine_activities."activityId" = $1;
+`, [id])
+//console.log(routines)
+return attachActivitiesToRoutines(routines);
 }
 
-async function updateRoutine({ id, ...fields }) {}
+async function updateRoutine({ id, ...fields }) {
+  const setString = Object.keys(fields).map(
+    (key, index) => `"${key}"=$${index + 1}`).join(`, `);
 
-async function destroyRoutine(id) {}
+    const { rows: [ routines ] } = await client.query(`
+    UPDATE routines
+    SET ${ setString }
+    WHERE id=${ id }
+    RETURNING *;
+  `, Object.values(fields));
+
+  return routines;
+}
+
+async function destroyRoutine(id) {
+  await client.query(`
+  DELETE FROM routine_activities
+  WHERE "routineId" = $1
+  `, [id])
+  const {rows: routine} = await client.query(`
+  DELETE FROM routines
+  WHERE id = $1
+  RETURNING *;
+  `, [id])
+  return routine;
+}
+
 
 module.exports = {
   getRoutineById,
