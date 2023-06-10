@@ -34,7 +34,7 @@ async function getRoutineActivitiesByRoutine({ id }) {
     const { rows: routine } = await client.query(`
     SELECT *
     FROM routine_activities
-    WHERE routine_activity.id = $1;
+    WHERE routine_activities.id = $1;
     `, [id]);
 
     return routine;
@@ -57,20 +57,24 @@ async function updateRoutineActivity({ id, ...fields }) {
 }
 
 async function destroyRoutineActivity(id) {
-  const {rows: routineActivity} = await client.query(`
+  const {rows: [routineActivity] } = await client.query(`
   DELETE FROM routine_activities
-  WHERE routine_activities.id = ($1);
+  WHERE id = $1
+  RETURNING *;
   `, [id]) 
 
   return routineActivity;
 }
 
 async function canEditRoutineActivity(routineActivityId, userId) {
-  if (routineActivityId = userId) {
-    return true;
-  } else {
-    return false
-  };
+  const {rows: [routine]} = await client.query(`
+    SELECT *
+    FROM routine_activities
+    JOIN routines ON routine_activities."routineId" = routines.id
+    AND routine_activities.id = $1
+  `, [routineActivityId]);
+  console.log(routine, userId);
+  return routine.creatorId === userId
 }
 
 module.exports = {

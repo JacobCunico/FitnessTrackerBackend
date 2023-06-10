@@ -81,7 +81,7 @@ async function getPublicRoutinesByActivity({ id }) {
   FROM routines
   JOIN users ON routines."creatorId" = users.id
   JOIN routine_activities 
-  ON routine_activites."routineId" = routines.id
+  ON routine_activities."routineId" = routines.id
   WHERE routines."isPublic" = true 
   AND routine_activities."activityId" = $1;
 `, [id])
