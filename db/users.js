@@ -14,9 +14,9 @@ async function createUser({ username, password }) {
 
     delete user.password;
 
-   return (user);
+   return user;
   } catch(ex) {
-
+      console.log(ex);
    }
 };
 
@@ -66,9 +66,29 @@ async function getUserByUsername(userName) {
 console.log(ex)
 }};
 
+async function doesUsernameExist(userName) {
+  try {
+    const {rows: [user]} = await client.query(`
+    SELECT username
+    FROM users
+    WHERE username = $1
+    `, [userName]);
+
+    if(!user){
+    return true;
+    } else {
+      return false;
+    }
+
+  } catch(ex) {
+    console.log(ex)
+  }
+};
+
 module.exports = {
   createUser,
   getUser,
   getUserById,
   getUserByUsername,
+  doesUsernameExist
 }

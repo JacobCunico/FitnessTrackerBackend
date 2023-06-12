@@ -2,16 +2,19 @@ const client = require("./client");
 const { attachActivitiesToRoutines } = require("./activities");
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
-  try {
-    const { rows: [ newRoutine ] } = await client.query(`
-    INSERT INTO routines( "creatorId", "isPublic", name, goal)
-    VALUES ($1, $2, $3, $4)
-    RETURNING *;
-    `, [ creatorId, isPublic, name, goal ]);
+  try{
+    const { rows: [routine] } = await client.query(`
 
-    //console.log("TESTING CREATE", newRoutine);
-    return newRoutine;
-  } catch(ex) {console.log(ex)}
+    INSERT INTO routines("creatorId", "isPublic", name, goal)
+    VALUES($1, $2, $3, $4)
+    RETURNING *;
+    `,[creatorId, isPublic, name, goal]);
+
+    return routine;
+  }catch(error){
+    console.error('ERROR Creating Routine!!!',error);
+    throw error;
+  }
 };
 
 async function getRoutineById(id) {

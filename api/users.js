@@ -1,26 +1,44 @@
-/* eslint-disable no-useless-catch */
 const express = require("express");
 const router = express.Router();
-const { creatUser } = require('../db');
+const { createUser, getUserByUsername,} = require('../db');
+const { PasswordTooShortError, UserTakenError } = require("../errors");
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
 
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
+    const { username, password } = req.body;
     try{
         if (req.body.password.length < 8) {
-            next({message: "Password Too Short!"})
-        };
+            res.send({
+                error: 'PasswordTooShort',
+                name: 'PasswordTooShort',
+                message: PasswordTooShortError(),
+            })
+        } else {
+            const User = await getUserByUsername(username);
+         if (User) {
+            res.send({
+                error: 'Username already taken',
+                name: 'UsernameAlreadyTaken',
+                message: UserTakenError(User.username),
+            });
+         } else {
+                const user = await createUser({ username, password });
+                if (user) {
+                    res.send({
+                      name: 'Success Registering!!!',
+                      message: 'Welcome You are Logged in!!!',
+                      token: "fake",
+                      user,
+                    });
+                }
+            }
+        }
 
-       const user = await creatUser(req.body);
-
-
-       res.send({
-        message: 'User Created',
-        token: "fake token",
-        user
-       });
-
-    } catch(ex) {
-        next({message: `User ${req.body.username} is already taken.`})
+    } catch(error) {
+    throw error;        
+    
     }
 });
 
@@ -30,4 +48,4 @@ router.post('/register', async (req, res, next) => {
 
 // GET /api/users/:username/routines
 
-module.exports = router;
+module.exports = router

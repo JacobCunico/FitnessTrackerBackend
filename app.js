@@ -12,7 +12,7 @@ app.use(express.json());
 // Setup your Middleware and API Router here
 app.use('/api', apiRouter);
 
-//ERROR HANDLER
+// ERROR HANDLER
 app.use((error, req, res, next) => {
     res.send({
         error: 'Some/any string',
