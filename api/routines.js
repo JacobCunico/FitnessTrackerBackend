@@ -1,13 +1,12 @@
 const express = require('express');
 const routinesRouter = express.Router();
+const { UnauthorizedError } = require('../errors');
+const { requireUser } = require('./utils');
 const {
     getAllRoutines,
     createRoutine,
 } = require('../db');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
-const SECRET = process.env.JWT_SECRET;
-const bcrypt = require('bcrypt');
+
 
 // GET /api/routines
 routinesRouter.get('/', async (req, res, next) => {
@@ -21,13 +20,19 @@ routinesRouter.get('/', async (req, res, next) => {
   });
 
 // POST /api/routines
-routinesRouter.post('/', async (req, res, next) => {
-    try {
-      const { isPublic, name, goal } = req.body;
-      const id = req.user.id;
-      const routine = await createRoutine({ id, isPublic, name, goal });
-        
-      res.status(201).json(routine);
+routinesRouter.post('/', requireUser, async (req, res, next) => {
+  try{
+  const { isPublic, name, goal } = req.body;
+  const userId = req.user.id;
+      const routine = await createRoutine({ 
+        creatorId: userId, 
+        isPublic: isPublic, 
+        name: name, 
+        goal: goal 
+      });
+      if (routine) {
+      res.send(routine);
+  };
     } catch (error) {
       next(error);
     }

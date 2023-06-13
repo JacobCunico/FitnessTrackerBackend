@@ -14,35 +14,40 @@ router.post('/register', async (req, res, next) => {
                 error: 'PasswordTooShort',
                 name: 'PasswordTooShort',
                 message: PasswordTooShortError(),
-            })
+            });
         } else {
-            const User = await getUserByUsername(username);
-         if (User) {
+            const userByName = await getUserByUsername(username);
+         if (userByName) {
             res.send({
                 error: 'Username already taken',
                 name: 'UsernameAlreadyTaken',
-                message: UserTakenError(User.username),
+                message: UserTakenError(userByName.username),
             });
          } else {
                 const user = await createUser({ username, password });
+                const token = jwt.sign({ username }, JWT_SECRET);
                 if (user) {
-                    res.send({
-                      name: 'Success Registering!!!',
-                      message: 'Welcome You are Logged in!!!',
-                      token: "fake",
-                      user,
-                    });
-                }
+                     res.send({
+                       name: 'Successfully Registered.',
+                       message: 'Successfully Registered.',
+                       token: token,
+                       user,
+                     });
+                 }
             }
         }
 
     } catch(error) {
-    throw error;        
-    
+    next(error);        
     }
 });
 
 // POST /api/users/login
+router.post('/login', async (req, res, next) => {
+    const { username, password } = req.body;
+
+    
+});
 
 // GET /api/users/me
 
