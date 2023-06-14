@@ -3,6 +3,7 @@ const router = express.Router();
 const { createUser, getUserByUsername, getUser, getUserById, getPublicRoutinesByUser, getAllRoutinesByUser} = require('../db');
 const { PasswordTooShortError, UserTakenError, } = require("../errors");
 const jwt = require('jsonwebtoken');
+const { requireUser } = require("./utils");
 const { JWT_SECRET } = process.env;
 
 // POST /api/users/register
@@ -55,14 +56,13 @@ router.post('/login', async (req, res, next) => {
           id: user.id,
           username
         }, JWT_SECRET);
-       
         const verifiedUser = {
           message: "you're logged in!",
           user: {
             id: user.id,
             username: username
           },
-          token
+          token: token
         }
         res.send(verifiedUser);
       }
