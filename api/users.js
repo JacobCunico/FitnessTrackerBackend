@@ -31,7 +31,10 @@ router.post('/register', async (req, res, next) => {
                        name: 'Successfully Registered.',
                        message: 'Successfully Registered.',
                        token: token,
-                       user,
+                       user: {
+                        id: user.id,
+                        username: username
+                       },
                      });
                  }
             }
@@ -55,13 +58,16 @@ router.post('/login', async (req, res, next) => {
        
         const verifiedUser = {
           message: "you're logged in!",
-          user,
+          user: {
+            id: user.id,
+            username: username
+          },
           token
         }
         res.send(verifiedUser);
       }
-    } catch ({name, message}) {
-      next({name, message})
+    } catch (error) {
+      next(error)
   }
   });
 
@@ -93,23 +99,24 @@ router.get('/me', async (req, res, next) => {
 
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) => {
-  const { username } = req.params;
+  const { username } = req.params
   const authHeader = req.headers.authorization;
   try {
-    const token = authHeader.split(" ")[1];
-    const verified = jwt.verify(token, JWT_SECRET);
-    const loggedIn = verified.username
+      const token = authHeader.split(" ")[1];
+      const verified = jwt.verify(token, JWT_SECRET);
+      const loggedIn = verified.username
 
-    if(loggedIn !== username) {
-      const publicRoutines = await getPublicRoutinesByUser({ username })
-      res.send(publicRoutines)
-    } else if (loggedIn === username) {
-      const routines = await getAllRoutinesByUser({ username })
-      res.send(routines)
-    }
+      if (loggedIn !== username) {
+          const publicRoutines = await getPublicRoutinesByUser({ username })
+          res.send(publicRoutines)
+      }
+      else if (loggedIn === username) {
+          const routines = await getAllRoutinesByUser({ username })
+          res.send(routines)
+      }
   } catch(error) {
-    next(error)
+      next(error)
   }
-});
+})
 
 module.exports = router
