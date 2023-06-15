@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getAllActivities, createActivity, updateActivity, getActivityById, getPublicRoutinesByActivity } = require("../db");
-const { requireUser } = require("./utils");
+const { getAllActivities, 
+    createActivity, 
+    updateActivity, 
+    getActivityById, 
+    getPublicRoutinesByActivity 
+} = require("../db");
+
 
 // GET /api/activities
 router.get("/", async (req, res, next) => {

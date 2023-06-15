@@ -45,6 +45,9 @@ router.post('/', requireUser, async (req, res, next) => {
 });
 
 // PATCH /api/routines/:routineId
+router.patch('/', requireUser, async (req, res, next) => {
+  
+})
 
 // DELETE /api/routines/:routineId
 

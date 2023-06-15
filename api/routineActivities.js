@@ -2,6 +2,7 @@ const express = require("express");
 const {
     updateRoutineActivity,
     canEditRoutineActivity,
+    destroyRoutineActivity,
 } = require("../db");
 const router = express.Router();
 
@@ -32,6 +33,19 @@ router.patch("/:routineActivityId", async (req, res, next) => {
 });
 
 // DELETE /api/routine_activities/:routineActivityId
-
+router.delete('/:routineActivityId'), async (req, res, next) => {
+    try{
+        const token = req.headers["Authorization"];
+        // find routine activity based in req.id
+        // find the routine based on "routineId"
+        // verify the token for the users id
+        // compare the users.id to routine's "creatorId"
+        // if they're equal then destroy routine activity
+        const destroyActivity = destroyRoutineActivity(req.id);
+        res.send(destroyActivity);
+    } catch(error) {
+        next(error)
+    };
+};
 
 module.exports = router;

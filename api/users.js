@@ -51,6 +51,7 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
     try {
       const user = await getUser({ username, password });
+      console.log("USER!!!", user);
       if (user) {
         const token = jwt.sign({
           id: user.id,
@@ -58,18 +59,15 @@ router.post('/login', async (req, res, next) => {
         }, JWT_SECRET);
         const verifiedUser = {
           message: "you're logged in!",
-          user: {
-            id: user.id,
-            username: username
-          },
-          token: token
+          user,
+          token
         }
         res.send(verifiedUser);
       }
     } catch (error) {
       next(error)
   }
-  });
+});
 
 // GET /api/users/me
 router.get('/me', async (req, res, next) => {
