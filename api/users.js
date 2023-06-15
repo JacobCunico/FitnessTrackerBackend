@@ -3,7 +3,6 @@ const router = express.Router();
 const { createUser, getUserByUsername, getUser, getUserById, getPublicRoutinesByUser, getAllRoutinesByUser} = require('../db');
 const { PasswordTooShortError, UserTakenError, } = require("../errors");
 const jwt = require('jsonwebtoken');
-const { requireUser } = require("./utils");
 const { JWT_SECRET } = process.env;
 
 // POST /api/users/register
@@ -51,7 +50,7 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
     try {
       const user = await getUser({ username, password });
-      console.log("USER!!!", user);
+    //  console.log("USER!!!", user);
       if (user) {
         const token = jwt.sign({
           id: user.id,

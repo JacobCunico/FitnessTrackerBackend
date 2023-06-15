@@ -3,8 +3,11 @@ const {
     updateRoutineActivity,
     canEditRoutineActivity,
     destroyRoutineActivity,
+    getRoutineById,
+    getRoutineActivityById
 } = require("../db");
 const router = express.Router();
+const {UnauthorizedUpdateError} = require("../errors");
 
 // PATCH /api/routine_activities/:routineActivityId
 router.patch("/:routineActivityId", async (req, res, next) => {
@@ -12,7 +15,10 @@ router.patch("/:routineActivityId", async (req, res, next) => {
 
         const { routineActivityId } = req.params;
         const { count, duration } = req.body;
+        const username = req.user.username;
         const canEdit = await canEditRoutineActivity(routineActivityId, req.userId)
+        const routineActivity = await getRoutineActivityById(routineActivityId);
+        const name = await getRoutineById(routineActivity.routineId)
         if(canEdit) {
         const update = await updateRoutineActivity({
             id: routineActivityId,
@@ -23,7 +29,7 @@ router.patch("/:routineActivityId", async (req, res, next) => {
     } else {
         res.send({
             error: " ",
-            message: " ",
+            message: `User ${username} is not allowed to update ${name.name}`,
             name: " "
         })
     }
